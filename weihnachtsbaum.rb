@@ -20,6 +20,6 @@ lines.times do |i|
     line[middle+i] = '*'
     puts line
   else
-    puts (' ' * (middle - 1))+'| |'+(' ' * (middle - 1))
+    puts (' ' * (middle - 1))+'| |'+(' ' * (middle - 2))
   end
 end
