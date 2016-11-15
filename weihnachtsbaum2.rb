@@ -1,35 +1,55 @@
 #!/usr/bin/ruby
 
+require 'highline'
+
 class ChristmasTree
   def initialize(width, height, prompt=true)
-    @numberOfCrownSpaces = (width-1)/2
-    @numberOfNeedles = 1
-    @numberOfCrownLines = height < (width+1)/2 ? height : (width+1)/2
-    @numberOfTrunkLines = @numberOfCrownLines < height ? height - @numberOfCrownLines : 0
-    @numberOfTrunkSpaces = @numberOfCrownSpaces - 1
-    @numberOfCrownLines -= prompt ? 1 : 0
+    numberOfCrownSpaces = (width-1)/2
+    numberOfNeedles = 1
+    if height < (width+1)/2
+      numberOfCrownLines = height
+      numberOfTrunkLines = 0
+    else
+      numberOfCrownLines = (width+1)/2
+      numberOfTrunkLines = height - numberOfCrownLines
+    end
+    numberOfTrunkSpaces = numberOfCrownSpaces - 1
+    numberOfCrownLines -= 1 if prompt
     #leave place for the following prompt, if so desired
+
+    @stringRepresentation = ""
+
+    numberOfCrownLines.times do
+      @stringRepresentation += (' ' * numberOfCrownSpaces) + ('*' * numberOfNeedles) + "\n"
+      numberOfCrownSpaces -= 1
+      numberOfNeedles += 2
+    end
+
+    numberOfTrunkLines.times do
+      @stringRepresentation += (' ' * numberOfTrunkSpaces) + '| |' + "\n"
+    end
   end
 
-  def print
-    @numberOfCrownLines.times do
-      puts (' ' * @numberOfCrownSpaces) + ('*' * @numberOfNeedles)
-      @numberOfCrownSpaces -= 1
-      @numberOfNeedles += 2
-    end
-
-    @numberOfTrunkLines.times do
-      puts (' ' * @numberOfTrunkSpaces) + '| |'
-    end
+  def to_s
+    @stringRepresentation
   end
 end
 
-require 'highline'
 
-dims = HighLine::SystemExtensions.terminal_size
+puts "Do you want an [o]ff-the-shelf tree or a [c]ustom one?"
+choice = gets.chomp
+if choice != "c" then
+  dims = HighLine::SystemExtensions.terminal_size
+  width = dims[0]
+  height = dims[1]
+  numberOfTrees = 1
+else
+  puts "How wide should it be?"
+  width = gets.chomp.to_i
+  puts "How tall should it be?"
+  height = gets.chomp.to_i
+end
 
-width = dims[0]
-height = dims[1]
+yourTree = ChristmasTree.new(width, height)
 
-myTree = ChristmasTree.new(width, height)
-myTree.print
+puts yourTree
